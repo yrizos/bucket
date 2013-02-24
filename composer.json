@@ -2,6 +2,7 @@
     "name":"yrizos/bucket",
     "type":"library",
     "license":"MIT",
+    "description":"A trivial PHP 5.3+ container, with onSet and onGet hooks.",
     "authors":[
         {
             "name":"Yannis Rizos",

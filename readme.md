@@ -1,5 +1,4 @@
-Bucket - Simple container for PHP 5.3+
+Bucket
 ===
 
-Trivial container object with OnSet/OnGet hooks.
-
+A trivial PHP 5.3+ container, with onSet and onGet hooks.

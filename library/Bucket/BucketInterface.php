@@ -13,11 +13,11 @@ interface BucketInterface extends \ArrayAccess, \Countable, \Serializable, \Iter
 
     public function getKeys();
 
-    public function attachHook($offset, callable $hook, $direction);
+    public function attachHook($offset, $hook, $direction);
 
-    public function attachHookOnSet($offset, callable $hook);
+    public function attachHookOnSet($offset, $hook);
 
-    public function attachHookOnGet($offset, callable $hook);
+    public function attachHookOnGet($offset, $hook);
 
     public function detachHook($offset, $direction = null);
 

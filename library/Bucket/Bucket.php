@@ -131,12 +131,15 @@ class Bucket implements BucketInterface
 
     /**
      * @param string|int $offset
-     * @param callable $hook
+     * @param $hook
      * @param string $direction
      * @return Bucket
      */
-    public function attachHook($offset, callable $hook, $direction)
+    public function attachHook($offset, $hook, $direction)
     {
+
+        if (!is_callable($hook)) return $this;
+
         if (is_array($offset)) {
             foreach ($offset as $value) $this->attachHook($value, $hook, $direction);
 
@@ -153,20 +156,20 @@ class Bucket implements BucketInterface
 
     /**
      * @param string|int $offset
-     * @param callable $hook
+     * @param $hook
      * @return Bucket
      */
-    public function attachHookOnSet($offset, callable $hook)
+    public function attachHookOnSet($offset, $hook)
     {
         return $this->attachHook($offset, $hook, self::HOOK_DIRECTION_SET);
     }
 
     /**
      * @param string|int $offset
-     * @param callable $hook
+     * @param $hook
      * @return Bucket
      */
-    public function attachHookOnGet($offset, callable $hook)
+    public function attachHookOnGet($offset, $hook)
     {
         return $this->attachHook($offset, $hook, self::HOOK_DIRECTION_GET);
     }

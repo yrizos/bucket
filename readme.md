@@ -2,6 +2,8 @@
 
 A set of basic containers, and a more complicated one with onSet and onGet hooks.
 
+Can be useful if you, like me, are bored writing the same magic and/or `\ArrayAccess` methods over and over again.
+
 ##Containers
 
 **Container**
@@ -124,3 +126,8 @@ var_dump($raw["param2"]); // string ''
 
 That's it.
 
+##Installation
+
+##Requirements
+- PHP 5.3+
+- [optional] PHPUnit 3.5+

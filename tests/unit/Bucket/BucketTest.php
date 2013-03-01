@@ -5,134 +5,109 @@ use \Bucket\Bucket;
 class BucketTest extends PHPUnit_Framework_TestCase
 {
 
-    protected $bucket;
     protected $data = array();
     protected $hooks = array();
 
     protected function setUp()
     {
-        $this->bucket = new Bucket();
         $this->data =
             array(
                 "index1" => "value1",
                 "index2" => "value2",
-                1 => "value11",
-                2 => "value21",
+                1        => "value11",
+                2        => "value21",
             );
 
         $this->hooks["castToInt"] = function ($data) {
             if (!is_scalar($data)) throw new \InvalidArgumentException();
+
             return (int)$data;
         };
 
         $this->hooks["castToString"] = function ($data) {
             return (string)$data;
         };
-
-    }
-
-    public function testEmpty()
-    {
-        $this->assertEmpty($this->bucket->getData());
     }
 
     public function testArrayAccess()
     {
-        $this->bucket["index"] = "value";
+        $bucket = new Bucket();
 
-        $this->assertEquals($this->bucket["index"], "value");
-        $this->assertTrue(isset($this->bucket["index"]));
-        $this->assertFalse(isset($this->bucket["index1"]));
+        $bucket["param1"] = "value1";
+        $bucket["param2"] = "value2";
 
-        unset($this->bucket["index"]);
-        $this->assertFalse(isset($this->bucket["index"]));
+        $this->assertEquals("value1", $bucket["param1"]);
+        $this->assertEquals("value2", $bucket["param2"]);
+
+        $this->assertTrue(isset($bucket["param1"]));
+        $this->assertFalse(isset($bucket["param3"]));
+
+        unset($bucket["param1"]);
+        $this->assertFalse(isset($bucket["param1"]));
     }
 
-    public function testSetData()
+    public function testSerialize()
     {
-        $this->bucket->setData($this->data);
+        $bucket = new Bucket();
+        $data   = array("param1" => "value1", "param2" => "value2");
 
-        $this->assertEquals(count($this->data), count($this->bucket));
+        /** @noinspection PhpUndefinedFieldInspection */
+        $bucket->param1 = "value1";
+        /** @noinspection PhpUndefinedFieldInspection */
+        $bucket->param2 = "value2";
 
-        foreach ($this->data as $key => $value) {
-            $this->assertTrue(isset($this->bucket[$key]));
-            $this->assertEquals($this->bucket[$key], $value);
-        }
+        $serialize = serialize($bucket);
+
+        $this->assertEquals(unserialize($serialize), $bucket);
+        $this->assertFalse($bucket->unserialize("")); // coverage OCD
     }
 
-    public function testGetData()
+    public function testHooks()
     {
-        $this->bucket->setData($this->data);
+        $bucket = new Bucket();
 
-        $this->assertEquals($this->data, $this->bucket->getData());
-    }
+        $bucket->attachHookOnGet(array("param1", "param2"), $this->hooks["castToInt"]);
+        $bucket->attachHookOnSet(array("param1", "param2"), $this->hooks["castToString"]);
 
-    public function testGetKeys()
-    {
-        $this->bucket->setData($this->data);
+        /** @noinspection PhpUndefinedFieldInspection */
+        $bucket->param1 = false;
+        /** @noinspection PhpUndefinedFieldInspection */
+        $bucket->param2 = 2.2;
 
-        $this->assertEquals(array_keys($this->data), $this->bucket->getKeys());
-    }
+        $this->assertInternalType("int", $bucket->param1);
+        $this->assertInternalType("int", $bucket->param1);
 
-    public function testIterator()
-    {
-        $this->bucket->setData($this->data);
+        $this->assertContains($this->hooks["castToInt"], $bucket->getHooksOnGet("param1"));
+        $this->assertContains($this->hooks["castToInt"], $bucket->getHooksOnGet("param2"));
+        $this->assertContains($this->hooks["castToString"], $bucket->getHooksOnSet("param1"));
+        $this->assertContains($this->hooks["castToString"], $bucket->getHooksOnSet("param2"));
 
-        foreach ($this->bucket as $key => $value) {
-            $this->assertEquals($value, $this->data[$key]);
-        }
-    }
+        $data = $bucket->getData(); // OnGet castToInt
+        $raw  = $bucket->getRawData(); // OnSet castToString
 
-    public function testTrimOnSet()
-    {
-        $this->bucket[" index "] = "value";
+        $this->assertSame(0, $data["param1"]);
+        $this->assertSame(2, $data["param2"]);
 
-        $this->assertTrue(isset($this->bucket["index"]));
-        $this->assertEquals($this->bucket["index"], "value");
-    }
+        $this->assertSame("", $raw["param1"]);
+        $this->assertSame("2.2", $raw["param2"]);
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testNullIndex()
-    {
-        $this->bucket[] = "value";
-    }
+        $bucket->detachHook(array("param1", "param2"), Bucket::HOOK_DIRECTION_GET);
 
-    public function testHooks_1()
-    {
-        $data =
-            array(
-                "a" => (float)1.0,
-                "b" => (float)2.0,
-                "c" => (float)3.0,
-                "d" => (float)4.0
-            );
+        $data = $bucket->getData();
+        $this->assertSame("", $data["param1"]);
+        $this->assertSame("2.2", $data["param2"]);
 
-        $offsets = array_keys($data);
+        $bucket->detachHook(array("param1", "param2"));
 
-        $this->bucket->attachHookOnSet($offsets, $this->hooks["castToString"]);
-        $this->bucket->attachHookOnGet($offsets, $this->hooks["castToInt"]);
-        $this->bucket->setData($data);
+        /** @noinspection PhpUndefinedFieldInspection */
+        $bucket->param1 = false;
+        /** @noinspection PhpUndefinedFieldInspection */
+        $bucket->param2 = 2.2;
 
-        $setValues = $this->bucket->getData(Bucket::HOOK_DIRECTION_SET);
-        $getValues = $this->bucket->getData(Bucket::HOOK_DIRECTION_GET);
+        $this->assertSame(false, $bucket["param1"]);
+        $this->assertSame(2.2, $bucket["param2"]);
 
-        $this->assertInternalType("array", $setValues);
-        $this->assertEquals($offsets, array_keys($setValues));
-
-        $this->assertInternalType("array", $getValues);
-        $this->assertEquals($offsets, array_keys($getValues));
-
-        $this->assertInternalType("int", $getValues["a"]);
-        $this->assertInternalType("int", $getValues["b"]);
-        $this->assertInternalType("int", $getValues["c"]);
-        $this->assertInternalType("int", $getValues["d"]);
-
-        $this->assertInternalType("string", $setValues["a"]);
-        $this->assertInternalType("string", $setValues["b"]);
-        $this->assertInternalType("string", $setValues["c"]);
-        $this->assertInternalType("string", $setValues["d"]);
+        $bucket->detachHook(array("param1", "param2"), "junk");
     }
 
 }

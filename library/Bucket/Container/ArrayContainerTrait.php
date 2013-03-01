@@ -13,6 +13,8 @@ trait ArrayContainerTrait
      */
     public function offsetSet($index, $value)
     {
+        $index = $this->getNormalizedIndex($index);
+
         $this->data[$index] = $value;
     }
 
@@ -23,6 +25,8 @@ trait ArrayContainerTrait
      */
     public function offsetGet($index)
     {
+        $index = $this->getNormalizedIndex($index);
+
         return
             $this->offsetExists($index)
                 ? $this->data[$index]
@@ -36,6 +40,8 @@ trait ArrayContainerTrait
      */
     public function offsetExists($index)
     {
+        $index = $this->getNormalizedIndex($index);
+
         return isset($this->data[$index]);
     }
 
@@ -44,6 +50,8 @@ trait ArrayContainerTrait
      */
     public function offsetUnset($index)
     {
+        $index = $this->getNormalizedIndex($index);
+
         if ($this->offsetExists($index)) unset($this->data[$index]);
     }
 

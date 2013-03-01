@@ -2,121 +2,21 @@
 
 namespace Bucket;
 
-class Bucket implements BucketInterface
+use Bucket\Container\MagicArrayContainer;
+
+class Bucket extends MagicArrayContainer implements BucketInterface
 {
-    static public $HOOK_DIRECTIONS = array(self::HOOK_DIRECTION_GET, self::HOOK_DIRECTION_SET);
 
-    private $data = array();
-    private $hooks = array();
+    protected $hooks = array();
 
     /**
-     * @param string|int $offset
-     * @return mixed|null
-     */
-    public function offsetGet($offset)
-    {
-        $offset = $this->getNormalizedOffset($offset);
-
-        return
-            self::offsetExists($offset)
-                ? $this->getValue($offset, $this->data[$offset], self::HOOK_DIRECTION_GET)
-                : null;
-    }
-
-    /**
-     * @param string|int $offset
-     * @param mixed $value
-     */
-    public function offsetSet($offset, $value)
-    {
-        $offset = $this->getNormalizedOffset($offset);
-
-        $this->data[$offset] = $this->getValue($offset, $value, self::HOOK_DIRECTION_SET);
-    }
-
-    /**
-     * @param string|int $offset
-     * @return bool
-     */
-    public function offsetExists($offset)
-    {
-        $offset = $this->getNormalizedOffset($offset);
-
-        return isset($this->data[$offset]);
-    }
-
-    /**
-     * @param string|int $offset
-     */
-    public function offsetUnset($offset)
-    {
-        $offset = $this->getNormalizedOffset($offset);
-
-        unset($this->data[$offset]);
-    }
-
-    /**
-     * @return int
-     */
-    public function count()
-    {
-        return count($this->data);
-    }
-
-    /**
-     * @return string
-     */
-    public function serialize()
-    {
-        $data = array($this->getData(self::HOOK_DIRECTION_SET), $this->hooks);
-
-        return serialize($data);
-    }
-
-    /**
-     * @param string $data
-     * @return bool|mixed
-     */
-    public function unserialize($data)
-    {
-        $data = unserialize($data);
-        if (!is_array($data) || count($data) != 2) return false;
-
-        $this->data = $data[0];
-        $this->hooks = $data[1];
-
-        return true;
-    }
-
-    /**
-     * @return \ArrayIterator
-     */
-    public function getIterator()
-    {
-        return new \ArrayIterator($this->data);
-    }
-
-    /**
-     * @param array $array
-     * @return Bucket
-     */
-    public function setData(array $array)
-    {
-        // setting one by one for set hooks to run
-        foreach ($array as $key => $value) self::offsetSet($key, $value);
-
-        return $this;
-    }
-
-    /**
-     * @param string $direction
      * @return array
      */
-    public function getData($direction = self::HOOK_DIRECTION_GET)
+    public function getData()
     {
-        $direction = $this->getNormalizedDirection($direction);
-        $data = $this->data;
-        foreach ($data as $offset => $value) $data[$offset] = $this->getValue($offset, $value, $direction);
+        $data = $this->getRawData();
+
+        foreach ($data as $index => $value) $data[$index] = $this->getValue($index, $value, self::HOOK_DIRECTION_GET);
 
         return $data;
     }
@@ -124,138 +24,46 @@ class Bucket implements BucketInterface
     /**
      * @return array
      */
-    public function getKeys()
+    public function getRawData()
     {
-        return array_keys($this->data);
+        return $this->data;
     }
 
     /**
-     * @param string|int $offset
-     * @param $hook
-     * @param string $direction
-     * @return Bucket
-     */
-    public function attachHook($offset, $hook, $direction)
-    {
-
-        if (!is_callable($hook)) return $this;
-
-        if (is_array($offset)) {
-            foreach ($offset as $value) $this->attachHook($value, $hook, $direction);
-
-            return $this;
-        }
-
-        $offset = $this->getNormalizedOffset($offset);
-        $direction = $this->getNormalizedDirection($direction);
-
-        $this->hooks[$offset][$direction][] = $hook;
-
-        return $this;
-    }
-
-    /**
-     * @param string|int $offset
-     * @param $hook
-     * @return Bucket
-     */
-    public function attachHookOnSet($offset, $hook)
-    {
-        return $this->attachHook($offset, $hook, self::HOOK_DIRECTION_SET);
-    }
-
-    /**
-     * @param string|int $offset
-     * @param $hook
-     * @return Bucket
-     */
-    public function attachHookOnGet($offset, $hook)
-    {
-        return $this->attachHook($offset, $hook, self::HOOK_DIRECTION_GET);
-    }
-
-    /**
-     * Fails silently.
+     * @param mixed $index
      *
-     * @param string|int $offset
-     * @param null|string $direction
-     * @return Bucket
+     * @return mixed|null
      */
-    public function detachHook($offset, $direction = null)
+    public function offsetGet($index)
     {
-        if (is_array($offset)) {
-            foreach ($offset as $value) $this->detachHook($value, $direction);
-
-            return $this;
-        }
-
-        try {
-            $offset = $this->getNormalizedOffset($offset);
-            if (!is_null($direction)) $direction = $this->getNormalizedDirection($direction);
-        } catch (\InvalidArgumentException $e) {
-            return $this;
-        }
-
-        if (isset($this->hooks[$offset])) {
-            if (is_null($direction)) {
-                unset($this->hooks[$offset]);
-            } else {
-                unset($this->hooks[$offset][$direction]);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param string|int $offset
-     * @param string|null $direction
-     * @return array
-     */
-    public function getHooks($offset, $direction = null)
-    {
-        $offset = $this->getNormalizedOffset($offset);
-
-        if (!isset($this->hooks[$offset])) return array();
-        if (is_null($direction)) return $this->hooks[$offset];
-
-        $direction = $this->getNormalizedDirection($direction);
-
         return
-            isset($this->hooks[$offset][$direction])
-                ? $this->hooks[$offset][$direction]
-                : array();
+            $this->offsetExists($index)
+                ? $this->getValue($index, $this->data[$index], self::HOOK_DIRECTION_GET)
+                : null;
     }
 
     /**
-     * @param string|int $offset
+     * @param mixed $index
+     * @param mixed $value
      */
-    public function getHooksOnSet($offset)
+    public function offsetSet($index, $value)
     {
-        return $this->getHooks($offset, self::HOOK_DIRECTION_SET);
-    }
-
-    /**
-     * @param string|int $offset
-     */
-    public function getHooksOnGet($offset)
-    {
-        return $this->getHooks($offset, self::HOOK_DIRECTION_GET);
+        $this->data[$index] = $this->getValue($index, $value, self::HOOK_DIRECTION_SET);
     }
 
     /**
      * Runs hooks on value
      *
-     * @param string|int $offset
-     * @param mixed $value
+     * @param mixed  $index
+     * @param mixed  $value
      * @param string $direction
+     *
      * @return mixed
      */
-    private function getValue($offset, $value, $direction)
+    protected function getValue($index, $value, $direction)
     {
-        $offset = $this->getNormalizedOffset($offset);
         $direction = $this->getNormalizedDirection($direction);
-        $hooks = $this->getHooks($offset, $direction);
+        $hooks     = $this->getHooks($index, $direction);
 
         if (!empty($hooks)) {
             foreach ($hooks as $hook) {
@@ -268,19 +76,158 @@ class Bucket implements BucketInterface
     }
 
     /**
-     * @param int|string $offset
-     * @return int|string
-     * @throws \InvalidArgumentException
+     * @param mixed  $index
+     * @param        $hook
+     * @param string $direction
+     *
+     * @return Bucket
      */
-    private function getNormalizedOffset($offset)
+    public function attachHook($index, $hook, $direction)
     {
-        if (!(is_string($offset) || is_int($offset))) throw new \InvalidArgumentException("Offset must be a string or an integer.");
 
-        return is_string($offset) ? trim($offset) : (int)$offset;
+        if (!is_callable($hook)) return $this;
+
+        if (is_array($index)) {
+            foreach ($index as $value) $this->attachHook($value, $hook, $direction);
+
+            return $this;
+        }
+
+        $index     = $this->getNormalizedIndex($index);
+        $direction = $this->getNormalizedDirection($direction);
+
+        $this->hooks[$index][$direction][] = $hook;
+
+        return $this;
+    }
+
+    /**
+     * @param mixed $index
+     * @param       $hook
+     *
+     * @return Bucket
+     */
+    public function attachHookOnSet($index, $hook)
+    {
+        return $this->attachHook($index, $hook, self::HOOK_DIRECTION_SET);
+    }
+
+    /**
+     * @param mixed $index
+     * @param       $hook
+     *
+     * @return Bucket
+     */
+    public function attachHookOnGet($index, $hook)
+    {
+        return $this->attachHook($index, $hook, self::HOOK_DIRECTION_GET);
+    }
+
+    /**
+     * Fails silently.
+     *
+     * @param mixed       $index
+     * @param null|string $direction
+     *
+     * @return Bucket
+     */
+    public function detachHook($index, $direction = null)
+    {
+        if (is_array($index)) {
+            foreach ($index as $value) $this->detachHook($value, $direction);
+
+            return $this;
+        }
+
+        $index = $this->getNormalizedIndex($index);
+
+        try {
+            if (!is_null($direction)) $direction = $this->getNormalizedDirection($direction);
+        } catch (\InvalidArgumentException $e) {
+            return $this;
+        }
+
+        if (isset($this->hooks[$index])) {
+            if (is_null($direction)) {
+                unset($this->hooks[$index]);
+            } else {
+                unset($this->hooks[$index][$direction]);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param mixed       $index
+     * @param string|null $direction
+     *
+     * @return array
+     */
+    public function getHooks($index, $direction = null)
+    {
+        $index = $this->getNormalizedIndex($index);
+
+        if (!isset($this->hooks[$index])) return array();
+        if (is_null($direction)) return $this->hooks[$index];
+
+        $direction = $this->getNormalizedDirection($direction);
+
+        return
+            isset($this->hooks[$index][$direction])
+                ? $this->hooks[$index][$direction]
+                : array();
+    }
+
+    /**
+     * @param mixed $index
+     *
+     * @return array
+     */
+    public function getHooksOnSet($index)
+    {
+        return $this->getHooks($index, self::HOOK_DIRECTION_SET);
+    }
+
+    /**
+     * @param mixed $index
+     *
+     * @return array
+     */
+    public function getHooksOnGet($index)
+    {
+        return $this->getHooks($index, self::HOOK_DIRECTION_GET);
+    }
+
+    /**
+     * @return string
+     */
+    public function serialize()
+    {
+        $data = array($this->getData(), $this->hooks);
+
+        return serialize($data);
+    }
+
+    /**
+     * @param string $data
+     *
+     * @return bool|mixed
+     */
+    public function unserialize($data)
+    {
+        $data = unserialize($data);
+        if (!is_array($data) || count($data) != 2) return false;
+
+        $this->setData($data[0]);
+        $this->hooks = $data[1];
+
+        return true;
     }
 
     /**
      * @param string $direction
+     *
      * @return string
      * @throws \InvalidArgumentException
      */
@@ -288,9 +235,16 @@ class Bucket implements BucketInterface
     {
         $direction = is_string($direction) ? strtolower(trim($direction)) : "";
 
-        if (!in_array($direction, self::$HOOK_DIRECTIONS)) throw new \InvalidArgumentException("Hook direction can only be one of: " . explode(", ", self::$HOOK_DIRECTIONS) . ".");
+        if (!in_array($direction, self::getHookDirections())) throw new \InvalidArgumentException("Hook direction can only be one of: " . implode(", ", self::getHookDirections()) . ".");
 
         return $direction;
     }
 
+    /**
+     * @return array
+     */
+    public static function getHookDirections()
+    {
+        return array(self::HOOK_DIRECTION_GET, self::HOOK_DIRECTION_SET);
+    }
 }

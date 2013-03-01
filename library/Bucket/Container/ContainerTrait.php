@@ -5,7 +5,7 @@ namespace Bucket\Container;
 trait ContainerTrait
 {
 
-    private $data = array();
+    protected $data = array();
 
     /**
      * @param array|ContainerInterface|\Traversable $data
@@ -31,11 +31,24 @@ trait ContainerTrait
      */
     protected function addData($data)
     {
-        foreach ($data as $key => $value) {
-            $this->data[$key] = $value;
+        foreach ($data as $index => $value) {
+            $index              = $this->getNormalizedIndex($index);
+            $this->data[$index] = $value;
         }
 
         return $this;
+    }
+
+    /**
+     * @param $index
+     *
+     * @return string
+     */
+    protected function getNormalizedIndex($index)
+    {
+        if (is_string($index)) $index = trim($index);
+
+        return $index;
     }
 
     /**

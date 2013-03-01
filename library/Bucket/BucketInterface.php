@@ -2,28 +2,28 @@
 
 namespace Bucket;
 
-interface BucketInterface extends \ArrayAccess, \Countable, \Serializable, \IteratorAggregate
+use Bucket\Container\MagicArrayContainerInterface;
+
+interface BucketInterface extends MagicArrayContainerInterface
 {
+
     const HOOK_DIRECTION_GET = "get";
     const HOOK_DIRECTION_SET = "set";
 
-    public function setData(array $array);
+    public function getRawData();
 
-    public function getData($direction = self::HOOK_DIRECTION_GET);
+    public function attachHook($index, $hook, $direction);
 
-    public function getKeys();
+    public function attachHookOnSet($index, $hook);
 
-    public function attachHook($offset, $hook, $direction);
+    public function attachHookOnGet($index, $hook);
 
-    public function attachHookOnSet($offset, $hook);
+    public function detachHook($index, $direction = null);
 
-    public function attachHookOnGet($offset, $hook);
+    public function getHooks($index, $direction = null);
 
-    public function detachHook($offset, $direction = null);
+    public function getHooksOnSet($index);
 
-    public function getHooks($offset, $direction = null);
+    public function getHooksOnGet($index);
 
-    public function getHooksOnSet($offset);
-
-    public function getHooksOnGet($offset);
 }

@@ -13,6 +13,8 @@ trait MagicContainerTrait
      */
     public function __set($index, $value)
     {
+        $index = $this->getNormalizedIndex($index);
+
         $this->data[$index] = $value;
     }
 
@@ -23,6 +25,8 @@ trait MagicContainerTrait
      */
     public function __get($index)
     {
+        $index = $this->getNormalizedIndex($index);
+
         return
             isset($this->data[$index])
                 ? $this->data[$index]
@@ -36,6 +40,8 @@ trait MagicContainerTrait
      */
     public function __isset($index)
     {
+        $index = $this->getNormalizedIndex($index);
+
         return isset($this->data[$index]);
     }
 
@@ -44,6 +50,8 @@ trait MagicContainerTrait
      */
     public function __unset($index)
     {
+        $index = $this->getNormalizedIndex($index);
+
         unset($this->data[$index]);
     }
 

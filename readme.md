@@ -126,8 +126,6 @@ var_dump($raw["param2"]); // string ''
 
 That's it.
 
-##Installation
-
 ##Requirements
 - PHP 5.3+
 - [optional] PHPUnit 3.5+

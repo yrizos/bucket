@@ -3,13 +3,13 @@
 <phpunit bootstrap="./bootstrap.php">
     <testsuites>
         <testsuite name="Bucket Test Suite">
-            <directory>./tests/unit/</directory>
+            <directory>./unit/</directory>
         </testsuite>
     </testsuites>
 
     <filter>
         <whitelist>
-            <directory suffix=".php">./library/Bucket/</directory>
+            <directory suffix=".php">./../library/Bucket/</directory>
         </whitelist>
     </filter>
 </phpunit>

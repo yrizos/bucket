@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Bucket" default="test">
+
+    <property name="dir_source" value="./library"/>
+    <property name="dir_tests" value="./tests/unit"/>
+    <property name="dir_build" value="./build"/>
+    <property name="dir_docs" value="${dir_build}/documentation"/>
+    <property name="dir_docs_report" value="${dir_docs}/coverage"/>
+    <property name="dir_docs_api" value="${dir_docs}/api"/>
+    <exec command="git describe --tags --abbrev=0" outputProperty="project_version"/>
+
+    <property name="build_project" value="Bucket ${project_version}"/>
+
+    <echo msg="Building ${build_project}"/>
+
+
+    <!-- Target: build -->
+    <target name="build">
+        <delete dir="${dir_build}"/>
+        <delete dir="${dir_docs}"/>
+        <mkdir dir="${dir_build}"/>
+        <mkdir dir="${dir_docs}"/>
+
+        <mkdir dir="${dir_docs_report}"/>
+        <exec command="phpunit --coverage-html ./../${dir_docs_report}" dir="./tests" checkreturn="true"
+              passthru="true">
+        </exec>
+
+        <mkdir dir="${dir_docs_api}"/>
+        <apigen
+                source="${dir_source}"
+                destination="${dir_docs_api}"
+                title="${build_project} API"
+                php="false"
+                todo="true"
+                />
+    </target>
+
+</project>

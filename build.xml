@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Bucket" default="test">
+<project name="Bucket" default="build">
 
     <property name="dir_source" value="./library"/>
     <property name="dir_tests" value="./tests/unit"/>

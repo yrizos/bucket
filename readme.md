@@ -1,8 +1,6 @@
 #Bucket [![Build Status](https://travis-ci.org/yrizos/bucket.png?branch=master)](https://travis-ci.org/yrizos/bucket)
 
-A set of basic containers, and a more complicated one with onSet and onGet hooks.
-
-Can be useful if you, like me, are bored writing the same magic and/or `\ArrayAccess` methods over and over again.
+A set of basic containers, and a more complicated one with onSet and onGet hooks. Can be useful if you, like me, are bored writing the same magic and/or `\ArrayAccess` methods over and over again.
 
 ##Containers
 
@@ -129,3 +127,17 @@ That's it.
 ##Requirements
 - PHP 5.3+
 - [optional] PHPUnit 3.5+
+
+##Setup
+
+In your `composer.json` file add this:
+
+``` json
+{
+    "require": {
+        "yrizos/bucket": ">=0.1.0"
+    }
+}
+```
+
+If you don't know what composer is, see [https://getcomposer.org/](https://getcomposer.org/) for more information and documentation.

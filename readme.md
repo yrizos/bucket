@@ -135,9 +135,9 @@ In your `composer.json` file add this:
 ``` json
 {
     "require": {
-        "yrizos/bucket": ">=0.1.0"
+        "yrizos/bucket": "dev-master"
     }
 }
 ```
 
-If you don't know what composer is, see [https://getcomposer.org/](https://getcomposer.org/) for more information and documentation.
+See [https://getcomposer.org/](https://getcomposer.org/) for details on composer.

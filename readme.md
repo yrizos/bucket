@@ -48,7 +48,7 @@ You can build on it with `MagicContainerTrait` and `MagicContainerInterface`.
 
 **ArrayContainer**
 
-`MagicContainer`'s sibling, but instead of magic method it implements `\ArrayAccess`:
+`MagicContainer`'s sibling, but instead of magic methods it implements `\ArrayAccess`:
 
 ```php
 use Bucket\Container\ArrayContainer;

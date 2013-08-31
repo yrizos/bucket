@@ -1,21 +1,21 @@
 {
-    "name":"yrizos/bucket",
-    "type":"library",
-    "license":"MIT",
-    "description":"A set of basic containers, and a more complicated one with onSet and onGet hooks.",
-    "authors":[
+    "name": "yrizos/bucket",
+    "type": "library",
+    "license": "MIT",
+    "description": "A set of basic containers, and a more complicated one with onSet and onGet hooks.",
+    "authors": [
         {
-            "name":"Yannis Rizos",
-            "email":"yrizos@gmail.com",
-            "homepage":"https://github.com/yrizos/bucket"
+            "name": "Yannis Rizos",
+            "email": "yrizos@gmail.com",
+            "homepage": "https://github.com/yrizos/bucket"
         }
     ],
-    "require":{
-        "php":">=5.3.0"
+    "require": {
+        "php": ">=5.4.0"
     },
-    "autoload":{
-        "psr-0":{
-            "Bucket":"library/"
+    "autoload": {
+        "psr-0": {
+            "Bucket": "library/"
         }
     }
 }

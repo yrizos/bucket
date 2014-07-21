@@ -52,6 +52,9 @@ var_dump($bucket->name); // string 'Yannis' (length=6)
 $bucket->email = 42; // will fail
 ```
 
+### Setup
+
+    require: "yrizos/bucket": "dev-master"
 
 ---
 

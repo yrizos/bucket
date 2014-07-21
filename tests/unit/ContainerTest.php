@@ -5,7 +5,7 @@ use Bucket\Container\Container;
 class ContainerTest extends \PHPUnit_Framework_TestCase
 {
 
-    public function testSetGet()
+    public function testInit()
     {
         $array = [1, 2, 3];
 
@@ -22,7 +22,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @depends testSetGet
+     * @depends testInit
      */
     public function testTraversable($stack)
     {
@@ -34,7 +34,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @depends testSetGet
+     * @depends testInit
      */
     public function testCountable($stack)
     {

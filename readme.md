@@ -56,6 +56,4 @@ $bucket->email = 42; // will fail
 
     require: "yrizos/bucket": "dev-master"
 
----
-
 [![Build Status](https://travis-ci.org/yrizos/bucket.png?branch=master)](https://travis-ci.org/yrizos/bucket)

@@ -7,19 +7,19 @@ trait ContainerTrait
     /**
      * @var array
      */
-    protected $container = [];
+    protected $data = [];
 
     /**
-     * @param array|ContainerInterface $container
+     * @param array|ContainerInterface $data
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function setContainer($container)
+    public function setData($data)
     {
-        if ($container instanceof ContainerInterface) $container = $container->getContainer();
-        if (!is_array($container)) throw new \InvalidArgumentException();
+        if ($data instanceof ContainerInterface) $data = $data->getData();
+        if (!is_array($data)) throw new \InvalidArgumentException();
 
-        $this->container = $container;
+        $this->data = $data;
 
         return $this;
     }
@@ -27,9 +27,9 @@ trait ContainerTrait
     /**
      * @return array
      */
-    public function getContainer()
+    public function getData()
     {
-        return $this->container;
+        return $this->data;
     }
 
     /**
@@ -37,7 +37,7 @@ trait ContainerTrait
      */
     public function count()
     {
-        return count($this->container);
+        return count($this->data);
     }
 
     /**
@@ -45,6 +45,6 @@ trait ContainerTrait
      */
     public function getIterator()
     {
-        return new \ArrayIterator($this->getContainer());
+        return new \ArrayIterator($this->getData());
     }
 }

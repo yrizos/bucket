@@ -9,28 +9,28 @@ trait ArrayContainerTrait
     public function offsetSet($index, $value)
     {
         if (is_null($index)) {
-            $this->container[] = $value;
+            $this->data[] = $value;
         } else {
-            $this->container[$index] = $value;
+            $this->data[$index] = $value;
         }
     }
 
     public function offsetGet($index)
     {
         return
-            isset($this->container[$index])
-                ? $this->container[$index]
+            isset($this->data[$index])
+                ? $this->data[$index]
                 : null;
     }
 
 
     public function offsetExists($index)
     {
-        return isset($this->container[$index]);
+        return isset($this->data[$index]);
     }
 
     public function offsetUnset($index)
     {
-        unset($this->container[$index]);
+        unset($this->data[$index]);
     }
 }

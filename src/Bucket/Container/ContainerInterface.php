@@ -5,8 +5,8 @@ namespace Bucket\Container;
 interface ContainerInterface extends \Countable, \IteratorAggregate
 {
 
-    public function setContainer($container);
+    public function setData($data);
 
-    public function getContainer();
+    public function getData();
 
 }

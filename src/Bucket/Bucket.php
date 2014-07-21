@@ -17,12 +17,12 @@ class Bucket implements BucketInterface
     {
         if (!$this->offsetExists($index)) return null;
 
-        return $this->processValue($this->container[$index], $index, BucketInterface::DIRECTION_GET);
+        return $this->processValue($this->data[$index], $index, BucketInterface::DIRECTION_GET);
     }
 
     public function offsetSet($index, $value)
     {
-        $this->container[$index] = $this->processValue($value, $index, BucketInterface::DIRECTION_SET);
+        $this->data[$index] = $this->processValue($value, $index, BucketInterface::DIRECTION_SET);
     }
 
     public function processValue($value, $index, $direction)

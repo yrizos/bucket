@@ -10,13 +10,13 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         $array = [1, 2, 3];
 
         $container1 = new Container();
-        $container1->setContainer($array);
+        $container1->setData($array);
 
         $container2 = new Container();
-        $container2->setContainer($container1);
+        $container2->setData($container1);
 
-        $this->assertEquals($array, $container1->getContainer());
-        $this->assertEquals($array, $container2->getContainer());
+        $this->assertEquals($array, $container1->getData());
+        $this->assertEquals($array, $container2->getData());
 
         return [$container1, $array];
     }

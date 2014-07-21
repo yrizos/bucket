@@ -6,4 +6,5 @@ class MagicContainer implements MagicContainerInterface
 {
 
     use MagicContainerTrait;
-}
+
+} 

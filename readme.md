@@ -1,143 +1,58 @@
-#Bucket [![Build Status](https://travis-ci.org/yrizos/bucket.png?branch=master)](https://travis-ci.org/yrizos/bucket)
+Bucket
+======
 
-A set of basic containers, and a more complicated one with onSet and onGet hooks. Can be useful if you, like me, are bored writing the same magic and/or `\ArrayAccess` methods over and over again.
+Bucket is a collection of container objects.
 
-##Containers
+### Basic containers
 
-**Container**
+There are four basic container traits: 
 
-Using it directly:
+- ContainerTrait: implements \Countable, \IteratorAggregate
+- ArrayContainerTrait: adds \ArrayAccess to the mix
+- MagicContainerTrait: if you prefer magic getter & setters to \ArrayAccess
+- MagicArrayContainerTrait: the name is revealing, isn't it?
 
-```php
-use Bucket\Container\Container;
-
-$container = new Container();
-$container->setData(array("param" => "value");
-$data = $container->getData();
-
-echo count($container); // 2
-```
-
-Pretty useless, right? Still, you can build on it:
+You can either attach the traits to your own classes, or use the concrete classes provided. Here's a quick example: 
 
 ```php
-use Bucket\Container\ContainerInterface;
-use Bucket\Container\ContainerTrait;
-
-class MyContainer implements ContainerInterface {
-    use ContainerTrait;
-}
-```
-
-and you're ready to go. All three containers come with a trait and an interface you can use in a similar manner.
-
-**MagicContainer**
-
-Adds magic methods to `Container`:
-
-```php
-use Bucket\Container\MagicContainer;
-
-$container = new MagicContainer();
-
-$container->param1 = "value1";
-$container->param2 = "value2";
-```
-
-You can build on it with `MagicContainerTrait` and `MagicContainerInterface`.
-
-**ArrayContainer**
-
-`MagicContainer`'s sibling, but instead of magic methods it implements `\ArrayAccess`:
-
-```php
-use Bucket\Container\ArrayContainer;
-
-$container = new ArrayContainer();
-
-$container["param1"] = "value1";
-$container["param2"] = "value2";
-```
-
-You can build on it with `ArrayContainerTrait` and `ArrayContainerInterface`.
-
-**MagicArrayContainer**
-
-```php
-use Bucket\Container\MagicArrayContainer;
-
-$container = new MagicArrayContainer();
-
-$container["param1"] = "value1";
-$container->param2 = "value2";
-```
-
-You can build on it with `MagicArrayContainerTrait` and `MagicArrayContainerInterface`.
-
-##Bucket
-
-This is were it gets a bit (just a tiny bit) more complicated. `Bucket` is build upon `MagicArrayContainer` with added OnSet and OnGet callable hooks.
-
-```php
-use Bucket\Bucket;
-
-$bucket = new Bucket;
-
-$bucket->attachHookOnGet(
-    array("param1", "param2"),
-    function($data) {
-        if(is_string($data)) return (int) $data;
-
-        return $data;
-    }
-);
-
-$bucket->attachHookOnSet(
-    "param1",
-    function($data) {
-        if(!is_string($data)) return (string) $data;
-
-        return $data;
-    }
-);
-
-$bucket->attachHookOnSet(
-    "param2",
-    function($data) {
-        if(!is_string($data)) return (string) $data;
-
-        return $data;
-    }
-);
-
-$bucket["param1"] = 1.5;
-$bucket->param2 = false;
-
-var_dump($bucket->param1); // int 1
-var_dump($bucket["param2"]); // int 0
-
-$raw = $bucket->getRawData();
-
-var_dump($raw["param1"]); // string '1.5'
-var_dump($raw["param2"]); // string ''
-```
-
-That's it.
-
-##Requirements
-- PHP 5.4+
-- [optional] PHPUnit 3.5+
-
-##Setup
-
-In your `composer.json` file add this:
-
-``` json
+class MyContainer implements Bucket\Container\MagicArrayContainerInterface
 {
-    "require": {
-        "yrizos/bucket": "dev-master"
-    }
+    use Bucket\Container\MagicArrayContainerTrait;
 }
+
+$myContainer        = new MyContainer();
+$myContainer->label = "hello world";
+
+echo $myContainer["label"];
 ```
 
-See [https://getcomposer.org/](https://getcomposer.org/) for details on composer.
+### Bucket
+
+Bucket is a bit more interesting, adding hooks to the mix.
+
+```php
+$bucket = new Bucket\Bucket();
+
+$bucket->onGet("name", function ($value) {
+    return trim($value);
+});
+
+$bucket->onSet("email", function ($value) {
+
+    if (!filter_var($value, FILTER_VALIDATE_EMAIL))
+        throw new  \InvalidArgumentException();
+
+    return filter_var($value, FILTER_SANITIZE_EMAIL);
+});
+
+
+$bucket->name = "    Yannis    ";
+var_dump($bucket->name); // string 'Yannis' (length=6)
+
+$bucket->email = 42; // will fail
+```
+
+
+---
+
+[![Build Status](https://travis-ci.org/yrizos/bucket.png?branch=master)](https://travis-ci.org/yrizos/bucket)

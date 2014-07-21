@@ -1,21 +1,29 @@
 {
     "name": "yrizos/bucket",
-    "type": "library",
     "license": "MIT",
+    "type": "library",
     "description": "A set of basic containers, and a more complicated one with onSet and onGet hooks.",
+    "homepage": "https://github.com/yrizos/bucket",
+
     "authors": [
         {
             "name": "Yannis Rizos",
             "email": "yrizos@gmail.com",
-            "homepage": "https://github.com/yrizos/bucket"
+            "homepage": "https://twitter.com/yrizos"
         }
     ],
+
     "require": {
         "php": ">=5.4.0"
     },
+
+    "require-dev": {
+        "phpunit/phpunit": "3.7.*@dev"
+    },
+
     "autoload": {
         "psr-0": {
-            "Bucket": "library/"
+            "Bucket": "src/"
         }
     }
 }

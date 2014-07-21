@@ -4,7 +4,6 @@ namespace Bucket\Container;
 
 trait MagicContainerTrait
 {
-
     use ContainerTrait;
 
     /**
@@ -13,36 +12,28 @@ trait MagicContainerTrait
      */
     public function __set($index, $value)
     {
-        $index = $this->getNormalizedIndex($index);
-
-        $this->data[$index] = $value;
+        $this->container[$index] = $value;
     }
 
     /**
      * @param $index
-     *
      * @return null
      */
     public function __get($index)
     {
-        $index = $this->getNormalizedIndex($index);
-
         return
-            isset($this->data[$index])
-                ? $this->data[$index]
+            isset($this->container[$index])
+                ? $this->container[$index]
                 : null;
     }
 
     /**
      * @param $index
-     *
      * @return bool
      */
     public function __isset($index)
     {
-        $index = $this->getNormalizedIndex($index);
-
-        return isset($this->data[$index]);
+        return isset($this->container[$index]);
     }
 
     /**
@@ -50,9 +41,6 @@ trait MagicContainerTrait
      */
     public function __unset($index)
     {
-        $index = $this->getNormalizedIndex($index);
-
-        unset($this->data[$index]);
+        unset($this->container[$index]);
     }
-
 }

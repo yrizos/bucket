@@ -1,5 +1,3 @@
-.idea
-vendor
-examples
-build
-composer.phar
+/.idea/
+/vendor/
+/composer.lock

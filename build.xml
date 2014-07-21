@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Bucket" default="build">
 
-    <property name="dir_source" value="./library"/>
-    <property name="dir_tests" value="./tests/unit"/>
+    <property name="dir_source" value="src"/>
+    <property name="dir_tests" value="_old/_unit"/>
     <property name="dir_build" value="./build"/>
     <property name="dir_docs" value="${dir_build}/documentation"/>
     <property name="dir_docs_report" value="${dir_docs}/coverage"/>

@@ -1,15 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<phpunit bootstrap="./bootstrap.php">
+<?xml version="1.0" encoding="utf-8"?>
+<phpunit bootstrap="./../vendor/autoload.php">
     <testsuites>
-        <testsuite name="Bucket Test Suite">
-            <directory>./unit/</directory>
+        <testsuite name="Unit tests">
+            <directory suffix="Test.php">./unit</directory>
         </testsuite>
     </testsuites>
 
     <filter>
-        <whitelist>
-            <directory suffix=".php">./../library/Bucket/</directory>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./../src</directory>
         </whitelist>
     </filter>
+
 </phpunit>

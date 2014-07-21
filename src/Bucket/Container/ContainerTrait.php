@@ -25,6 +25,14 @@ trait ContainerTrait
     }
 
     /**
+     * @return array
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    /**
      * @param array|ContainerInterface $data
      * @return $this
      * @throws \InvalidArgumentException
@@ -40,11 +48,26 @@ trait ContainerTrait
     }
 
     /**
-     * @return array
+     * @param $callback
+     * @return $this
+     * @throws \InvalidArgumentException
      */
-    public function getData()
+    public function filter($callback)
     {
-        return $this->data;
+        if (!is_callable($callback)) throw new \InvalidArgumentException();
+
+        $data = array_filter($this->getData(), $callback);
+
+        return $this->setData($data);
+    }
+
+    public function map($callback)
+    {
+        if (!is_callable($callback)) throw new \InvalidArgumentException();
+
+        $data = array_map($callback, $this->getData());
+
+        return $this->setData($data);
     }
 
     /**

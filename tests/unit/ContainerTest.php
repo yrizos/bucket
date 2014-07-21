@@ -43,4 +43,32 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(count($array), count($container));
     }
 
+    public function testMerge()
+    {
+        $array1 =
+            [
+                "key1" => "1.1",
+                "key2" => "1.2",
+            ];
+
+        $array2 =
+            [
+                "key2" => "2.2",
+                "key3" => "2.3"
+            ];
+
+        $container = new Container();
+        $container->setData($array1);
+        $container->merge($array2);
+
+        $data = $container->getData();
+
+        $this->assertArrayHasKey("key1", $data);
+        $this->assertArrayHasKey("key2", $data);
+        $this->assertArrayHasKey("key3", $data);
+        $this->assertEquals($data["key1"], "1.1");
+        $this->assertEquals($data["key2"], "2.2");
+        $this->assertEquals($data["key3"], "2.3");
+    }
+
 } 

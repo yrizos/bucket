@@ -25,6 +25,21 @@ trait ContainerTrait
     }
 
     /**
+     * @param array|ContainerInterface $data
+     * @return $this
+     * @throws \InvalidArgumentException
+     */
+    public function merge($data)
+    {
+        if ($data instanceof ContainerInterface) $data = $data->getData();
+        if (!is_array($data)) throw new \InvalidArgumentException();
+
+        $this->data = array_merge($this->data, $data);
+
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function getData()

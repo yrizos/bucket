@@ -9,4 +9,6 @@ interface ContainerInterface extends \Countable, \IteratorAggregate
 
     public function getData();
 
+    public function merge($data);
+
 }
